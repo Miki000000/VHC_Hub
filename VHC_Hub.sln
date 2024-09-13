@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VHC_Erp", "VHC_Erp", "{08CE7FDA-13B3-43E8-B857-77C3EB221D03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VHC_Erp.frontend", "VHC_Erp.frontend\VHC_Erp.frontend.csproj", "{16C85D25-E574-4F47-8814-6887B941F66A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VHC_Erp.api", "VHC_Erp.api\VHC_Erp.api.csproj", "{CBC51930-0F84-45E7-AB5D-89445C1FD86B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VHC_Erp.Shared", "VHC_Erp.Shared\VHC_Erp.Shared.csproj", "{236E1FFE-65AC-4A12-924A-7FCB89F65E74}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{16C85D25-E574-4F47-8814-6887B941F66A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16C85D25-E574-4F47-8814-6887B941F66A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16C85D25-E574-4F47-8814-6887B941F66A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16C85D25-E574-4F47-8814-6887B941F66A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBC51930-0F84-45E7-AB5D-89445C1FD86B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBC51930-0F84-45E7-AB5D-89445C1FD86B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBC51930-0F84-45E7-AB5D-89445C1FD86B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBC51930-0F84-45E7-AB5D-89445C1FD86B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{236E1FFE-65AC-4A12-924A-7FCB89F65E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{236E1FFE-65AC-4A12-924A-7FCB89F65E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{236E1FFE-65AC-4A12-924A-7FCB89F65E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{236E1FFE-65AC-4A12-924A-7FCB89F65E74}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{16C85D25-E574-4F47-8814-6887B941F66A} = {08CE7FDA-13B3-43E8-B857-77C3EB221D03}
+		{CBC51930-0F84-45E7-AB5D-89445C1FD86B} = {08CE7FDA-13B3-43E8-B857-77C3EB221D03}
+		{236E1FFE-65AC-4A12-924A-7FCB89F65E74} = {08CE7FDA-13B3-43E8-B857-77C3EB221D03}
+	EndGlobalSection
+EndGlobal
