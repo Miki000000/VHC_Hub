@@ -1,0 +1,23 @@
+﻿<MudDialog>
+    <TitleContent>
+        @Title
+    </TitleContent>
+    <DialogContent>
+        @Value
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Ok" Variant="Variant.Filled" Color="Color.Primary">
+            Ok
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public dynamic Value { get; set; }
+    [Parameter]
+    public string Title { get; set; }
+    [CascadingParameter]
+    MudDialogInstance _mudDialogInstance { get; set; }
+    void Ok() => _mudDialogInstance.Close(DialogResult.Ok(true));
+}

@@ -1,6 +1,8 @@
-﻿namespace VHC_Erp.api.Infrastructure.Interfaces;
+﻿using VHC_Erp.api.Domain.Entities;
 
-public class ITokenService
+namespace VHC_Erp.api.Infrastructure.Interfaces;
+
+public interface ITokenService
 {
-    
+    string CreateToken(UserIdentity users);
 }

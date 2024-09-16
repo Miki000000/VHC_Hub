@@ -44,4 +44,8 @@
       <None Remove="Domain\Enums\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\VHC_Erp.Shared\VHC_Erp.Shared.csproj" />
+    </ItemGroup>
+
 </Project>

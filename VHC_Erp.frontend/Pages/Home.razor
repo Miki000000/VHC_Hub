@@ -1,7 +1,14 @@
 ﻿@page "/"
+@using VHC_Erp.frontend.Features.User
+@inject IDialogService DialogService
 
-<PageTitle>Home</PageTitle>
+<MudButton OnClick="CreateUser" Variant="Variant.Filled" Color="Color.Primary">Create User<MudIcon Icon="@Icons.Material.Filled.Person"/></MudButton>
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+@code
+{
+    void CreateUser()
+    {
+        var options = new DialogOptions { FullWidth = true, CloseOnEscapeKey = true};
+        DialogService.Show<RegisterUserAsync>("Register User Async", options);
+    }
+}

@@ -1,0 +1,51 @@
+﻿@using System.Text.Json
+@using VHC_Erp.frontend.Configurations
+@using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
+@using VHC_Erp.Shared.EntitiesCommands.User
+@inject IGenerateDialog GenerateDialog
+@inject IHttpClientFactory ClientBuilder
+
+<MudDialog>
+    <TitleContent>
+        Register a User
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="@typeof(RegisterUserCommand)">
+            <DataAnnotationsValidator/>
+            <MudTextField Label="Username" HelperText="Min. 3 characters" @bind-Value="username" For="(() => username)" Variant="Variant.Outlined"/>
+            <MudTextField InputType="InputType.Email" Label="Email" HelperText="Min. 3 characters" @bind-Value="email" For="(() => email)" Variant="Variant.Outlined"/>
+            <MudTextField InputType="InputType.Password" Label="Password" HelperText="Min. 3 characters" @bind-Value="password" For="(() => password)" Variant="Variant.Outlined"/>
+            <MudTextField Label="Money" HelperText="Min. 3 characters" @bind-Value="money" For="(() => money)" Variant="Variant.Outlined"/>
+        </EditForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="@(async () => await RegisterUser(new RegisterUserCommand(email, username, password, money)))" Variant="Variant.Filled">
+            Ok
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    string username;
+    string email;
+    string password;
+    int money;
+
+    public async Task RegisterUser(RegisterUserCommand registerUserCommand)
+    {
+        try
+        {
+            var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
+            var result = await client.PostAsJsonAsync("/api/user", registerUserCommand);
+            if (!result.IsSuccessStatusCode) GenerateDialog.ShowErrorMessage("Failed to create user.");
+            var contentString = await result.Content.ReadAsStringAsync();
+            var response = JsonSerializer.Deserialize<RegisterUserResponse>(contentString, new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
+            if (response is null) GenerateDialog.ShowErrorMessage("Error on translating the json to readable object");
+            GenerateDialog.ShowSuccessMessage<RegisterUserResponse>(response);
+        }
+        catch (Exception e)
+        {
+            GenerateDialog.ShowErrorMessage(e.Message);
+        }
+    }
+}

@@ -1,5 +1,7 @@
 ﻿using Carter;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using VHC_Erp.api.Domain.Entities;
 using VHC_Erp.api.Infrastructure;
 
 namespace VHC_Erp.api.Configurations;
@@ -17,6 +19,14 @@ public static class ApplicationExtensions
             options.JsonSerializerOptions.ReferenceHandler =
                 System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
         });
+        builder.Services.AddIdentity<UserIdentity, IdentityRole>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 12;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+            })
+            .AddEntityFrameworkStores<PostgresqlDbContext>();  
         return builder;
     }
 
