@@ -22,10 +22,10 @@ public class RegisterUserCommandHandler(UserManager<UserIdentity> userManager, I
             return await newUser.ToMaybe()
                 .Ensure(async u =>
                 {
-                    var createResult = await userManager.CreateAsync(newUser, registerUserCommand.Password);
+                    var createResult = await userManager.CreateAsync(u, registerUserCommand.Password);
                     return createResult.Succeeded;
                 }, "Failed on creating user", 400)
-                .Ensure(async u =>
+                .Ensure(async _ =>
                 {
                     var addToRole = await userManager.AddToRoleAsync(newUser, "Admin");
                     return addToRole.Succeeded;
