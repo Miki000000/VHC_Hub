@@ -15,6 +15,8 @@ public class UserEndpoints : ICarterModule
         routes.MapPost("", RegisterUserEndpoint)
         .Produces<RegisterUserResponse>()
         .Produces(404);
+            .Produces<RegisterUserResponse>()
+            .Produces(400);
     }
 
     //Do a request to the service to register user
