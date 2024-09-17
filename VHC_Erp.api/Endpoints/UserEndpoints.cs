@@ -14,12 +14,15 @@ public class UserEndpoints : ICarterModule
     {
         var routes = app.MapGroup("api/user");
         routes.MapPost("", RegisterUserEndpoint)
-        .Produces<RegisterUserResponse>()
-        .Produces(404);
             .Produces<RegisterUserResponse>()
             .Produces(400);
-            .Produces<RegisterUserResponse>()
-            .Produces(400);
+        routes.MapGet("/{id}", GetUserById)
+            .Produces<GetUserByIdResponse>()
+            .Produces(404);
+
+        routes.MapGet("", GetAllUsers)
+            .Produces<List<GetAllUsersResponse>>()
+            .Produces(404);
     }
 
     //Do a request to the service to register user
