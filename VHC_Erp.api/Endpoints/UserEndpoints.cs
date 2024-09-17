@@ -31,4 +31,30 @@ public class UserEndpoints : ICarterModule
         var result = await handler.RegisterUserCommandAsync(command);
         return result.HandleResponse();
     }
+
+    async Task<IResult> GetUserById(string id, IGetUserByIdQueryHandler handler)
+    {
+        var result = await handler.GetUserByIdAsync(id);
+        return result.HandleResponse();
+    }
+
+    async Task<IResult> GetAllUsers(bool applyFilter,
+        string? filterBy,
+        string? filterWithValue,
+        bool isDescending,
+        string? orderBy,
+        int pageNumber,
+        int pageSize,
+        IGetAllUsersQueryHandler handler)
+    {
+        var query = new GetAllUsersQuery(applyFilter,
+            filterBy,
+            filterWithValue,
+            isDescending,
+            orderBy,
+            pageNumber,
+            pageSize);
+        var result = await handler.GetAllUsersAsync(query);
+        return result.HandleResponse();
+    }
 }
