@@ -2,6 +2,7 @@
 @using VHC_Erp.frontend.Configurations
 @using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
 @using VHC_Erp.Shared.EntitiesCommands.User
+@using VHC_Erp.Shared.SharedLogic
 @inject IGenerateDialog GenerateDialog
 @inject IHttpClientFactory ClientBuilder
 
@@ -36,12 +37,16 @@
         try
         {
             var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
-            var result = await client.PostAsJsonAsync("/api/user", registerUserCommand);
-            if (!result.IsSuccessStatusCode) GenerateDialog.ShowErrorMessage("Failed to create user.");
-            var contentString = await result.Content.ReadAsStringAsync();
-            var response = JsonSerializer.Deserialize<RegisterUserResponse>(contentString, new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
-            if (response is null) GenerateDialog.ShowErrorMessage("Error on translating the json to readable object");
-            GenerateDialog.ShowSuccessMessage<RegisterUserResponse>(response);
+            var rawResult = await client.PostAsJsonAsync("/api/user", registerUserCommand);
+            var result = await rawResult
+                .ToMaybe()
+                .Ensure(r => r.IsSuccessStatusCode, () => GenerateDialog.ShowErrorMessage("Failed to create user"))
+                .Then(async r
+                    =>
+                {
+                    var content = await r.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<RegisterUserResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).ToMaybe();
+                }, () => GenerateDialog.ShowErrorMessage("Failed on getting user json."));
         }
         catch (Exception e)
         {

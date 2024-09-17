@@ -3,18 +3,18 @@
 public class Maybe<T>
 {
     public T Value { get; private set; }
-    public List<string> Error { get; private set; }
+    public List<string>? Error { get; private set; }
     public bool Exists { get; private set; }
     public int HttpCode { get; private set; }
 
-    private Maybe(T value, bool exists, string error, int httpCode)
+    private Maybe(T value, bool exists, string? error, int httpCode)
     {
         Value = value;
         Exists = exists;
         HttpCode = httpCode;
         if(!Exists)
         {
-            Error = error.Split(["\n"], StringSplitOptions.None).ToList();
+            Error = error?.Split(["\n"], StringSplitOptions.None).ToList();
         }
     }
     public static Maybe<T> None(string error, int errorCode) => new Maybe<T>(default!, false, error, errorCode);

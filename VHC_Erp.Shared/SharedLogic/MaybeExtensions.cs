@@ -14,8 +14,8 @@ public static class MaybeExtensions
     /// var userMaybe = user.ToMaybe(); //can be null
     /// </code>
     /// </example>
-    public static Maybe<T> ToMaybe<T>(this T value)
-        => value is null ? Maybe<T>.None("Value does not exists", 404) : Maybe<T>.Some(value);
+    public static Maybe<T> ToMaybe<T>(this T? value)
+        => value is null || value is "" || value is 0 ? Maybe<T>.None("Value does not exists", 404) : Maybe<T>.Some(value);
 
     /// <summary>
     /// Function is an extension method of Monad instances.
@@ -34,7 +34,30 @@ public static class MaybeExtensions
     /// </code>
     /// </example>
     public static Maybe<U> Then<T, U>(this Maybe<T> maybe, Func<T, Maybe<U>> predicate, string errorMessage, int errorCode) 
-        => !maybe.Exists ? Maybe<U>.None(string.Join("\n", maybe.Error), maybe.HttpCode) : predicate(maybe.Value).Exists ? predicate(maybe.Value) : Maybe<U>.None(errorMessage, errorCode);
+        => !maybe.Exists ? Maybe<U>.None(string.Join("\n", maybe.Error!), maybe.HttpCode) : predicate(maybe.Value).Exists ? predicate(maybe.Value) : Maybe<U>.None(errorMessage, errorCode);
+    /// <summary>
+    /// Function is an extension method of Monad instances.
+    /// Gets a Monad of type T as an input, applies a predicate in it, and output a Monad with the result of type U.
+    /// </summary>
+    /// <param name="maybe">Maybe to extend</param>
+    /// <param name="predicate">Predicate that gets the current Monad as an input and</param>
+    /// <param name="action">Action to perform in error case</param>
+    /// <typeparam name="T">Type of the Maybe Input</typeparam>
+    /// <typeparam name="U">Type of the Maybe that will come as an output</typeparam>
+    /// <returns>The Maybe Monad with the type U</returns>
+    /// <example>
+    /// <code>
+    /// var newValue = userMaybe.Then(user => new UserDto(user.Name, user.Age, user.Email), () => YourErrorHandler());
+    /// </code>
+    /// </example>
+    public static async Task<Maybe<U>> Then<T, U>(this Maybe<T> maybe, Func<T, Task<Maybe<U>>> predicate, Action action)
+    {
+        var newMaybe = await predicate(maybe.Value);
+        if (!maybe.Exists || !newMaybe.Exists)
+            action();
+        return !maybe.Exists ? Maybe<U>.None(string.Join("\n", maybe.Error!), maybe.HttpCode) :
+            newMaybe.Exists ? newMaybe : Maybe<U>.None(default!, default!);
+    }
 
     /// <summary>
     /// Function is an extension method of Monad instances.
@@ -55,7 +78,7 @@ public static class MaybeExtensions
     public static async Task<Maybe<U>> Then<T, U>(this Task<Maybe<T>> maybeTask, Func<T, Maybe<U>> predicate, string errorMessage, int errorCode)
     {
         var maybe = await maybeTask;
-        return !maybe.Exists ? Maybe<U>.None(string.Join("\n", maybe.Error), maybe.HttpCode) : predicate(maybe.Value).Exists ? predicate(maybe.Value) : Maybe<U>.None(errorMessage, errorCode);
+        return !maybe.Exists ? Maybe<U>.None(string.Join("\n", maybe.Error!), maybe.HttpCode) : predicate(maybe.Value).Exists ? predicate(maybe.Value) : Maybe<U>.None(errorMessage, errorCode);
     }
 
     /// <summary>
@@ -76,7 +99,7 @@ public static class MaybeExtensions
     /// </example>
     public static async Task<Maybe<U>> Then<T, U>(this Maybe<T> maybe, Func<T, Task<Maybe<U>>> predicate, string errorMessage, int errorCode) 
     {
-        if (!maybe.Exists) return Maybe<U>.None(string.Join("\n", maybe.Error), maybe.HttpCode);
+        if (!maybe.Exists) return Maybe<U>.None(string.Join("\n", maybe.Error!), maybe.HttpCode);
         var result = await predicate(maybe.Value);
         return result.Exists ? result : Maybe<U>.None(errorMessage, errorCode);
     }
@@ -100,7 +123,7 @@ public static class MaybeExtensions
     public static async Task<Maybe<U>> Then<T, U>(this Task<Maybe<T>> maybeTask, Func<T, Task<Maybe<U>>> predicate, string errorMessage, int errorCode) 
     {
         var maybe = await maybeTask;
-        if (!maybe.Exists) return Maybe<U>.None(string.Join("\n", maybe.Error), maybe.HttpCode);
+        if (!maybe.Exists) return Maybe<U>.None(string.Join("\n", maybe.Error!), maybe.HttpCode);
         var result = await predicate(maybe.Value);
         return result.Exists ? result : Maybe<U>.None(errorMessage, errorCode);
     }
@@ -121,6 +144,27 @@ public static class MaybeExtensions
     /// </example>
     public static Maybe<T> Ensure<T>(this Maybe<T> maybe, Func<T, bool> predicate, string errorMessage, int errorCode)
         => !maybe.Exists ? maybe : predicate(maybe.Value) ? maybe : Maybe<T>.None(errorMessage, errorCode);
+    
+    /// <summary>
+    /// Ensures that a predicate is true for the value in the Maybe, otherwise returns None.
+    /// </summary>
+    /// <param name="maybe">Maybe to extend</param>
+    /// <param name="predicate">Predicate to check against the Maybe value</param>
+    /// <param name="action">Action to perform in error case</param>
+    /// <typeparam name="T">Type of the Maybe</typeparam>
+    /// <returns>The original Maybe if the predicate is true, otherwise None</returns>
+    /// <example>
+    /// <code>
+    /// var validUser = userMaybe.Ensure(user => user.Age >= 18, () => YourErrorHandler());
+    /// </code>
+    /// </example>
+    public static Maybe<T> Ensure<T>(this Maybe<T> maybe, Func<T, bool> predicate, Action action)
+    {
+        var isTrue = predicate(maybe.Value);
+        if (!isTrue)
+            action();
+        return !maybe.Exists ? maybe : isTrue ? maybe : Maybe<T>.None(default!, default!);
+    }
 
     /// <summary>
     /// Ensures that an async predicate is true for the value in the Maybe, otherwise returns None.
