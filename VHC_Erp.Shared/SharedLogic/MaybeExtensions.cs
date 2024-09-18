@@ -16,7 +16,6 @@ public static class MaybeExtensions
     /// </example>
     public static Maybe<T> ToMaybe<T>(this T? value)
         => value is null || value is "" || value is 0 ? Maybe<T>.None("Value does not exists", 404) : Maybe<T>.Some(value);
-
     /// <summary>
     /// Function is an extension method of Monad instances.
     /// Gets a Monad of type T as an input, applies a predicate in it, and output a Monad with the result of type U.
