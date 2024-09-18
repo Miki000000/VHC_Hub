@@ -22,7 +22,7 @@ public static class QueryHandler
             return isDecending
                 ? objToSort.OrderByDescending(i => EF.Property<string>(i!, column))
                 : objToSort.OrderBy(i => EF.Property<string>(i!, column));
-        return isDecending ? objToSort.Order() : objToSort.OrderDescending();
+        return isDecending ? objToSort.OrderBy(i => EF.Property<string>(i!, "Id")) : objToSort.OrderByDescending(i => EF.Property<string>(i!, "Id"));
     }
 
     public static IQueryable<T> ApplyPagination<T>(this IQueryable<T> objToPage, int pageNumber, int pageSize)
