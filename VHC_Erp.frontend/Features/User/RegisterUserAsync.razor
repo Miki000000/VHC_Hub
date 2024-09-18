@@ -1,4 +1,5 @@
-﻿@using System.Text.Json
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Text.Json
 @using VHC_Erp.frontend.Configurations
 @using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
 @using VHC_Erp.Shared.EntitiesCommands.User
@@ -11,16 +12,15 @@
         Register a User
     </TitleContent>
     <DialogContent>
-        <EditForm Model="@typeof(RegisterUserCommand)">
-            <DataAnnotationsValidator/>
-            <MudTextField Label="Username" HelperText="Min. 3 characters" @bind-Value="username" For="(() => username)" Variant="Variant.Outlined"/>
-            <MudTextField InputType="InputType.Email" Label="Email" HelperText="Min. 3 characters" @bind-Value="email" For="(() => email)" Variant="Variant.Outlined"/>
-            <MudTextField InputType="InputType.Password" Label="Password" HelperText="Min. 3 characters" @bind-Value="password" For="(() => password)" Variant="Variant.Outlined"/>
-            <MudTextField Label="Money" HelperText="Min. 3 characters" @bind-Value="money" For="(() => money)" Variant="Variant.Outlined"/>
-        </EditForm>
+        <MudForm @bind-IsValid="formIsValid" @bind-Errors="errors">
+            <MudTextField @bind-Value="username" HelperText="Min. 3 characters" Label="Username" Required="true" RequiredError="Username is required!" Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="email" HelperText="Min. 3 characters" InputType="InputType.Email" Label="Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute(){ErrorMessage = "The Email is invalid!"})" Variant="Variant.Outlined" />
+            <MudTextField InputType="InputType.Password" Required="true" RequiredError="Password is required!" Label="Password" HelperText="Min. 3 characters" @bind-Value="password" Variant="Variant.Outlined"/>
+            <MudTextField Label="Money" Required="true" RequiredError="Money is required!" HelperText="Min. 3 characters" @bind-Value="money" Variant="Variant.Outlined"/>
+        </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Primary" OnClick="@(async () => await RegisterUser(new RegisterUserCommand(email, username, password, money)))" Variant="Variant.Filled">
+        <MudButton Color="Color.Primary" OnClick="@(async () => {  await RegisterUser(new RegisterUserCommand(email, username, password, money)); })" Variant="Variant.Filled">
             Ok
         </MudButton>
     </DialogActions>
@@ -30,23 +30,40 @@
     string username;
     string email;
     string password;
-    int money;
-
+    int money = 0;
+    bool formIsValid;
+    string[] errors = {};
+    
     public async Task RegisterUser(RegisterUserCommand registerUserCommand)
     {
         try
         {
+            if(!formIsValid)
+            {
+                GenerateDialog.ShowErrorMessage("Invalid user request.\n" + string.Join("\n", errors));
+                return; 
+            }
             var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
             var rawResult = await client.PostAsJsonAsync("/api/user", registerUserCommand);
-            var result = await rawResult
+            await rawResult
                 .ToMaybe()
-                .Ensure(r => r.IsSuccessStatusCode, () => GenerateDialog.ShowErrorMessage("Failed to create user"))
+                .Ensure(r => r.IsSuccessStatusCode,
+                    async () => GenerateDialog.ShowErrorMessage("Failed to create user: " + await rawResult.Content.ReadAsStringAsync()))
                 .Then(async r
                     =>
                 {
                     var content = await r.Content.ReadAsStringAsync();
-                    return JsonSerializer.Deserialize<RegisterUserResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }).ToMaybe();
-                }, () => GenerateDialog.ShowErrorMessage("Failed on getting user json."));
+                    var response = JsonSerializer.Deserialize<RegisterUserResponse>(content,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        });
+                    GenerateDialog.ShowSuccessMessage("Success on creating account: " + response);
+                    return response.ToMaybe();
+                }, action: () =>
+                {
+                    GenerateDialog.ShowErrorMessage("Failed on getting user json.");
+                });
         }
         catch (Exception e)
         {

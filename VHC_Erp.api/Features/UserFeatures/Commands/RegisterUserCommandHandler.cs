@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using VHC_Erp.api.Domain.Entities;
 using VHC_Erp.api.Infrastructure.Interfaces;
 using VHC_Erp.Shared.EntitiesCommands.User;
@@ -20,16 +21,19 @@ public class RegisterUserCommandHandler(UserManager<UserIdentity> userManager, I
         {
             var newUser = registerUserCommand.Adapt<UserIdentity>();
             return await newUser.ToMaybe()
+                .Ensure(async u 
+                        => !(await userManager.Users.AnyAsync(user => u.UserName == user.UserName))
+                    ,"Already exists a user with this name", 400)
                 .Ensure(async u =>
                 {
                     var createResult = await userManager.CreateAsync(u, registerUserCommand.Password);
                     return createResult.Succeeded;
-                }, "Failed on creating user", 400)
+                }, $"Failed on registering user in the database. Try again or contact a administrator", 400)
                 .Ensure(async _ =>
                 {
                     var addToRole = await userManager.AddToRoleAsync(newUser, "Admin");
                     return addToRole.Succeeded;
-                }, "Error on role assignment", 400)
+                }, "Error on role assignment. Contact a administrator", 400)
                 .Then(u =>
                 {
                     var user = u.Adapt<RegisterUserResponse>() with { Token = tokenService.CreateToken(u) };
