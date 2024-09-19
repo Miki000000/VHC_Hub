@@ -16,7 +16,7 @@ builder.Services.AddHttpClient(HttpClientConfigs.ClientName, config =>
     config.BaseAddress = new Uri(HttpClientConfigs.ServerRoute);
 });
 
-builder.Services.AddTransient<RegisterUserAsync>();
+builder.Services.AddTransient<RegisterUserDialog>();
 builder.Services.AddScoped<IGenerateDialog, GenerateDialog> ();
 
 

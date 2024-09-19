@@ -3,12 +3,13 @@
 @inject IDialogService DialogService
 
 <MudButton OnClick="CreateUser" Variant="Variant.Filled" Color="Color.Primary">Create User<MudIcon Icon="@Icons.Material.Filled.Person"/></MudButton>
+<UserDataGrid/>
 
 @code
 {
     void CreateUser()
     {
         var options = new DialogOptions { FullWidth = true, CloseOnEscapeKey = true};
-        DialogService.Show<RegisterUserAsync>("Register User Async", options);
+        DialogService.Show<RegisterUserDialog>("Register User Async", options);
     }
 }

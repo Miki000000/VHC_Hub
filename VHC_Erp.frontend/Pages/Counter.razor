@@ -1,12 +1,7 @@
 ﻿@page "/counter"
+@using VHC_Erp.frontend.Features.User
 
-<PageTitle>Counter</PageTitle>
-
-<h1>Counter</h1>
-
-<p role="status">Current count: @currentCount</p>
-
-<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<UserDataGrid/>
 
 @code {
     private int currentCount = 0;

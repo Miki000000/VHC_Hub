@@ -1,0 +1,52 @@
+﻿@using System.Text.Json
+@using VHC_Erp.frontend.Configurations
+@using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
+@using VHC_Erp.Shared.EntitiesQueries.User
+@inject IHttpClientFactory ClientBuilder
+@inject IGenerateDialog GenerateDialog
+
+
+
+<MudDataGrid T="GetAllUsersResponse" Loading="@_isLoading" Items="@_usersResponses" Bordered="true" Dense="true">
+    <Columns>
+        <PropertyColumn Property="x => x.UserName" Title="Username"/>
+        <PropertyColumn Property="x => x.Email" Title="Email"/>
+        <PropertyColumn Property="x => x.Money" Title="Money"/>
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="GetAllUsersResponse"/>
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    bool _isLoading;
+    IEnumerable<GetAllUsersResponse> _usersResponses = new List<GetAllUsersResponse>();
+
+    private async Task GetAllUsersQuery(bool applyFilter, string? filterBy, string? filterWithValue, bool isDescending, string? orderBy, int pageNumber, int pageSize)
+    {
+        try
+        {
+            _isLoading = true;
+            var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
+            var rawResponse = await client.GetAsync($"/api/user?applyfilter={applyFilter}&filterBy={filterBy}&filterWithValue={filterWithValue}&isDescending={isDescending}&orderBy={orderBy}&pageNumber={pageNumber}&pageSize={pageSize}");
+            if (!rawResponse.IsSuccessStatusCode) GenerateDialog.ShowErrorMessage("Failed on getting users from db." + await rawResponse.Content.ReadAsStringAsync());
+            var content = await rawResponse.Content.ReadAsStringAsync();
+            _usersResponses = JsonSerializer.Deserialize<IEnumerable<GetAllUsersResponse>>(content,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                }) ?? new List<GetAllUsersResponse>();
+            _isLoading = false;
+        }
+        catch (Exception e)
+        {
+            GenerateDialog.ShowErrorMessage("Failed on getting users from db: " + e.Message);
+        }
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetAllUsersQuery(false, null, null, false, null, 1, 25);
+    }
+}
