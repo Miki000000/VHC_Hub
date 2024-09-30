@@ -1,10 +1,8 @@
 ﻿@using System.Text.Json
 @using VHC_Erp.frontend.Configurations
-@using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
 @using VHC_Erp.Shared.EntitiesQueries.User
 @inject IHttpClientFactory ClientBuilder
-@inject IGenerateDialog GenerateDialog
-
+@inject ISnackbar Snackbar
 
 
 <MudDataGrid T="GetAllUsersResponse" Loading="@_isLoading" Items="@_usersResponses" Bordered="true" Dense="true">
@@ -24,12 +22,14 @@
 
     private async Task GetAllUsersQuery(bool applyFilter, string? filterBy, string? filterWithValue, bool isDescending, string? orderBy, int pageNumber, int pageSize)
     {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
         try
         {
+            
             _isLoading = true;
             var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
             var rawResponse = await client.GetAsync($"/api/user?applyfilter={applyFilter}&filterBy={filterBy}&filterWithValue={filterWithValue}&isDescending={isDescending}&orderBy={orderBy}&pageNumber={pageNumber}&pageSize={pageSize}");
-            if (!rawResponse.IsSuccessStatusCode) GenerateDialog.ShowErrorMessage("Failed on getting users from db." + await rawResponse.Content.ReadAsStringAsync());
+            if (!rawResponse.IsSuccessStatusCode) Snackbar.Add("Failed on getting users from db." + await rawResponse.Content.ReadAsStringAsync(), Severity.Error);
             var content = await rawResponse.Content.ReadAsStringAsync();
             _usersResponses = JsonSerializer.Deserialize<IEnumerable<GetAllUsersResponse>>(content,
                 new JsonSerializerOptions
@@ -40,7 +40,7 @@
         }
         catch (Exception e)
         {
-            GenerateDialog.ShowErrorMessage("Failed on getting users from db: " + e.Message);
+            Snackbar.Add("Failed on getting users from db: " + e.Message, Severity.Error);
         }
 
     }

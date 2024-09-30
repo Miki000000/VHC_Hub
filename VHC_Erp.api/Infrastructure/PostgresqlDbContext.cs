@@ -5,9 +5,9 @@ using VHC_Erp.api.Infrastructure.EntitiesConfiguration;
 
 namespace VHC_Erp.api.Infrastructure;
 
-public class PostgresqlDbContext : IdentityDbContext<UserIdentity>
+public class PostgresqlDbContext(DbContextOptions<PostgresqlDbContext> options)
+    : IdentityDbContext<UserIdentity>(options)
 {
-    public PostgresqlDbContext(DbContextOptions<PostgresqlDbContext> options): base(options){}
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
