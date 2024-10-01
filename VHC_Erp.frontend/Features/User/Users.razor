@@ -1,0 +1,23 @@
+﻿@page "/Users"
+@inject IDialogService DialogService
+<PageTitle>Users</PageTitle>
+
+
+<MudButton OnClick="CreateUser" Variant="Variant.Filled" Color="Color.Primary">
+    Create User<MudIcon Icon="@Icons.Material.Filled.Person"/>
+</MudButton>
+
+<UserDataGrid @ref="_userDataGrid"/>
+
+@code
+{
+    UserDataGrid? _userDataGrid;
+    async void CreateUser()
+    {
+        var options = new DialogOptions { FullWidth = true, CloseOnEscapeKey = true};
+        var dialog = DialogService.Show<RegisterUserDialog>("Register User Async",
+            options);
+
+        await dialog.Result;
+    }
+}

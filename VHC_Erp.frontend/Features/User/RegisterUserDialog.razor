@@ -4,7 +4,6 @@
 @using VHC_Erp.frontend.Utils.GlobalDialogErrorHandler
 @using VHC_Erp.Shared.EntitiesCommands.User
 @using VHC_Erp.Shared.SharedLogic
-@inject IGenerateDialog GenerateDialog
 @inject IHttpClientFactory ClientBuilder
 @inject ISnackbar Snackbar
 
@@ -30,12 +29,16 @@
 </MudDialog>
 
 @code {
-    string username;
-    string email;
-    string password;
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+    string? username;
+    string? email;
+    string? password;
     int money = 0;
     bool formIsValid;
     string[] errors = {};
+    [Parameter]
+    public EventCallback OnUserCreation { get; set; }
     
     public async Task RegisterUser(RegisterUserCommand registerUserCommand)
     {
@@ -62,12 +65,14 @@
                         {
                             PropertyNameCaseInsensitive = true
                         });
-                    Snackbar.Add("Success on creating account: " + response, Severity.Success);
+                    Snackbar.Add("Success on creating account!", Severity.Success); 
+                    MudDialog.Close(DialogResult.Ok(true));
                     return response.ToMaybe();
                 }, action: () => Snackbar.Add("Failed on getting user json.", Severity.Error));
         }
         catch (Exception e)
         {
+            MudDialog.Close(DialogResult.Cancel());
             Snackbar.Add($"Unknown error: {e.Message}", Severity.Error);
         }
     }

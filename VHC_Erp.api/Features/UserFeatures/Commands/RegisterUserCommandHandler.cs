@@ -28,7 +28,7 @@ public class RegisterUserCommandHandler(UserManager<UserIdentity> userManager, I
                 {
                     var createResult = await userManager.CreateAsync(u, registerUserCommand.Password);
                     return createResult.Succeeded;
-                }, $"Failed on registering user in the database. Try again or contact a administrator", 400)
+                }, "Failed on registering user in the database. Try again or contact a administrator", 400)
                 .Ensure(async _ =>
                 {
                     var addToRole = await userManager.AddToRoleAsync(newUser, "Admin");

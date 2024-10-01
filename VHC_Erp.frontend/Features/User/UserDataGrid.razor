@@ -28,6 +28,7 @@
             
             _isLoading = true;
             var client = ClientBuilder.CreateClient(HttpClientConfigs.ClientName);
+            
             var rawResponse = await client.GetAsync($"/api/user?applyfilter={applyFilter}&filterBy={filterBy}&filterWithValue={filterWithValue}&isDescending={isDescending}&orderBy={orderBy}&pageNumber={pageNumber}&pageSize={pageSize}");
             if (!rawResponse.IsSuccessStatusCode) Snackbar.Add("Failed on getting users from db." + await rawResponse.Content.ReadAsStringAsync(), Severity.Error);
             var content = await rawResponse.Content.ReadAsStringAsync();
@@ -48,5 +49,11 @@
     protected override async Task OnInitializedAsync()
     {
         await GetAllUsersQuery(false, null, null, false, null, 1, 25);
+    }
+
+    public async Task RefreshData()
+    {
+        await GetAllUsersQuery(false, null, null, false, null, 1, 25);
+        StateHasChanged();
     }
 }
