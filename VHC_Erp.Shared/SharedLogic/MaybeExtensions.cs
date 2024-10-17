@@ -128,36 +128,36 @@ public static class MaybeExtensions
     }
 
     /// <summary>
-    /// Ensures that a predicate is true for the value in the Maybe, otherwise returns None.
+    /// Ensures that a predicate is true for the value in the Maybe, otherwise returns Error.
     /// </summary>
     /// <param name="maybe">Maybe to extend</param>
     /// <param name="predicate">Predicate to check against the Maybe value</param>
     /// <param name="errorMessage">Error message to use if the predicate fails</param>
     /// <param name="errorCode">Http error code</param>
     /// <typeparam name="T">Type of the Maybe</typeparam>
-    /// <returns>The original Maybe if the predicate is true, otherwise None</returns>
+    /// <returns>The original Maybe if the predicate is true, otherwise Error</returns>
     /// <example>
     /// <code>
-    /// var validUser = userMaybe.Ensure(user => user.Age >= 18, "User must be 18 or older");
+    /// var validUser = userMaybe.Assert(user => user.Age >= 18, "User must be 18 or older");
     /// </code>
     /// </example>
-    public static Maybe<T> Ensure<T>(this Maybe<T> maybe, Func<T, bool> predicate, string errorMessage, int errorCode)
+    public static Maybe<T> Assert<T>(this Maybe<T> maybe, Func<T, bool> predicate, string errorMessage, int errorCode)
         => !maybe.Exists ? maybe : predicate(maybe.Value) ? maybe : Maybe<T>.None(errorMessage, errorCode);
     
     /// <summary>
-    /// Ensures that a predicate is true for the value in the Maybe, otherwise returns None.
+    /// Ensures that a predicate is true for the value in the Maybe, otherwise returns Error.
     /// </summary>
     /// <param name="maybe">Maybe to extend</param>
     /// <param name="predicate">Predicate to check against the Maybe value</param>
     /// <param name="action">Action to perform in error case</param>
     /// <typeparam name="T">Type of the Maybe</typeparam>
-    /// <returns>The original Maybe if the predicate is true, otherwise None</returns>
+    /// <returns>The original Maybe if the predicate is true, otherwise Error</returns>
     /// <example>
     /// <code>
-    /// var validUser = userMaybe.Ensure(user => user.Age >= 18, () => YourErrorHandler());
+    /// var validUser = userMaybe.Assert(user => user.Age >= 18, () => YourErrorHandler());
     /// </code>
     /// </example>
-    public static Maybe<T> Ensure<T>(this Maybe<T> maybe, Func<T, bool> predicate, Action action)
+    public static Maybe<T> Assert<T>(this Maybe<T> maybe, Func<T, bool> predicate, Action action)
     {
         var isTrue = predicate(maybe.Value);
         if (!isTrue)
@@ -166,37 +166,37 @@ public static class MaybeExtensions
     }
 
     /// <summary>
-    /// Ensures that an async predicate is true for the value in the Maybe, otherwise returns None.
+    /// Ensures that an async predicate is true for the value in the Maybe, otherwise returns Error.
     /// </summary>
     /// <param name="maybe">Maybe to extend</param>
     /// <param name="predicate">Async predicate to check against the Maybe value</param>
     /// <param name="errorMessage">Error message to use if the predicate fails</param>
     /// <param name="errorCode">Http error code</param>
     /// <typeparam name="T">Type of the Maybe</typeparam>
-    /// <returns>The original Maybe if the predicate is true, otherwise None</returns>
+    /// <returns>The original Maybe if the predicate is true, otherwise Error</returns>
     /// <example>
     /// <code>
-    /// var validUser = await userMaybe.Ensure(async user => await IsUserValidAsync(user), "User is not valid");
+    /// var validUser = await userMaybe.Assert(async user => await IsUserValidAsync(user), "User is not valid");
     /// </code>
     /// </example>
-    public static async Task<Maybe<T>> Ensure<T>(this Maybe<T> maybe, Func<T, Task<bool>> predicate, string errorMessage, int errorCode)
+    public static async Task<Maybe<T>> Assert<T>(this Maybe<T> maybe, Func<T, Task<bool>> predicate, string errorMessage, int errorCode)
         => !maybe.Exists ? maybe : await predicate(maybe.Value) ? maybe : Maybe<T>.None(errorMessage, errorCode);
 
     /// <summary>
-    /// Ensures that an async predicate is true for the value in the Maybe Task, otherwise returns None.
+    /// Ensures that an async predicate is true for the value in the Maybe Task, otherwise returns Error.
     /// </summary>
     /// <param name="maybeTask">Maybe Task to extend</param>
     /// <param name="predicate">Async predicate to check against the Maybe value</param>
     /// <param name="errorMessage">Error message to use if the predicate fails</param>
     /// <param name="errorCode">Http error code</param>
     /// <typeparam name="T">Type of the Maybe</typeparam>
-    /// <returns>The original Maybe if the predicate is true, otherwise None</returns>
+    /// <returns>The original Maybe if the predicate is true, otherwise Error</returns>
     /// <example>
     /// <code>
-    /// var validUser = await userMaybeTask.Ensure(async user => await IsUserValidAsync(user), "User is not valid");
+    /// var validUser = await userMaybeTask.Assert(async user => await IsUserValidAsync(user), "User is not valid");
     /// </code>
     /// </example>
-    public static async Task<Maybe<T>> Ensure<T>(this Task<Maybe<T>> maybeTask, Func<T, Task<bool>> predicate, string errorMessage, int errorCode)
+    public static async Task<Maybe<T>> Assert<T>(this Task<Maybe<T>> maybeTask, Func<T, Task<bool>> predicate, string errorMessage, int errorCode)
     {
         var maybe = await maybeTask;
         return !maybe.Exists ? maybe : await predicate(maybe.Value) ? maybe : Maybe<T>.None(errorMessage, errorCode);

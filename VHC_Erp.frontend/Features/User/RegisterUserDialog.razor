@@ -54,7 +54,7 @@
             var rawResult = await client.PostAsJsonAsync("/api/user", registerUserCommand);
             await rawResult
                 .ToMaybe()
-                .Ensure(r => r.IsSuccessStatusCode,
+                .Assert(r => r.IsSuccessStatusCode,
                     async () => Snackbar.Add("Failed to create user: " + await rawResult.Content.ReadAsStringAsync(), Severity.Error))
                 .Then(async r
                     =>

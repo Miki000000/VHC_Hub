@@ -22,7 +22,7 @@ public class GenerateDialog(IDialogService dialogService) : IGenerateDialog
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true};
         var parameters = new DialogParameters
         {
-            ["Value"] = message,
+            ["Some"] = message,
             ["Title"] = "Error"
         };
         var dialogRef = dialogService.Show<Dialog>("Erro", parameters, options);
@@ -41,7 +41,7 @@ public class GenerateDialog(IDialogService dialogService) : IGenerateDialog
         var options = new DialogOptions { CloseOnEscapeKey = true, FullWidth = true};
         var parameters = new DialogParameters
         {
-            ["Value"] = value,
+            ["Some"] = value,
             ["Title"] = "Success"
         };
         var dialogRef = dialogService.Show<Dialog>("Sucesso", parameters, options);
