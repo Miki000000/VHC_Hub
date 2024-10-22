@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VHC_Erp.api.Domain.Entities;
+using VHC_Erp.api.Domain.Entities.UserEntities;
 using VHC_Erp.Shared.EntitiesQueries.User;
 using VHC_Erp.Shared.SharedLogic;
 

@@ -2,6 +2,7 @@ using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VHC_Erp.api.Domain.Entities;
+using VHC_Erp.api.Domain.Entities.UserEntities;
 using VHC_Erp.api.Utils;
 using VHC_Erp.Shared.EntitiesQueries.User;
 using VHC_Erp.Shared.SharedLogic;
@@ -26,7 +27,7 @@ public class GetAllUsersQueryHandler(UserManager<UserIdentity> userManager) : IG
                 : userManager.Users;
             users = users.ApplySort(query.IsDescending, query.OrderBy);
             users = users.ApplyPagination(query.PageNumber, query.PageSize);
-            return (await users.Select(u => u.Adapt<GetAllUsersResponse>()).ToListAsync()).Some<>();
+            return (await users.ToListAsync()).Some<List<UserIdentity>, List<GetAllUsersResponse>>();
         }
         catch (Exception e)
         {

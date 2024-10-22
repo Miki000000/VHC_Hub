@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using VHC_Erp.api.Domain.Entities;
+using VHC_Erp.api.Domain.Entities.UserEntities;
 using VHC_Erp.api.Infrastructure.Interfaces;
 
 namespace VHC_Erp.api.Infrastructure.Services;

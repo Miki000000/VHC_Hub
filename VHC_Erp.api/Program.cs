@@ -12,7 +12,7 @@ builder.Services.AddCors(options =>
     {
         corsBuilder
             .AllowAnyHeader()
-            .WithOrigins(["http://localhost:5017"])
+            .WithOrigins("http://localhost:5017")
             .Build();
     });
 });
