@@ -10,9 +10,10 @@ public static class HandleEndpointResponse
     }
     public static IResult HandleResponse<T>(this Option<T> r)
     {
-        return r.Match(
-            Some: value => Results.Json(value, statusCode: 200),
-            None: (err, code) => Results.Json(err.Split(["\n"], StringSplitOptions.None), statusCode: code)
-        );
+        return r switch
+        {
+            Some<T> response => Results.Json(response.Value, statusCode: response.StatusCode),
+            None<T> response => Results.Json(response.Error.Split(["\n"], StringSplitOptions.None), statusCode: response.ErrorCode)
+        };
     }
 }

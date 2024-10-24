@@ -27,11 +27,11 @@ public class GetAllUsersQueryHandler(UserManager<UserIdentity> userManager) : IG
                 : userManager.Users;
             users = users.ApplySort(query.IsDescending, query.OrderBy);
             users = users.ApplyPagination(query.PageNumber, query.PageSize);
-            return (await users.ToListAsync()).Some<List<UserIdentity>, List<GetAllUsersResponse>>();
+            return (await users.ToListAsync()).Some<List<GetAllUsersResponse>>();
         }
         catch (Exception e)
         {
-           return Option<List<GetAllUsersResponse>>.None("Error: " + e.Message);
+           return new List<GetAllUsersResponse>().None("Error: " + e.Message);
         }
     }
 }

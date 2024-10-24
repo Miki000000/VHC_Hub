@@ -42,7 +42,7 @@ public class GenerateDialog(IDialogService dialogService) : IGenerateDialog
         var parameters = new DialogParameters
         {
             ["Some"] = value,
-            ["Title"] = "Success"
+            ["Title"] = "Some"
         };
         var dialogRef = dialogService.Show<Dialog>("Sucesso", parameters, options);
         await dialogRef.Result;
