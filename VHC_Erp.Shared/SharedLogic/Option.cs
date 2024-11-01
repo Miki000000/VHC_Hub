@@ -1,4 +1,5 @@
-﻿using Mapster;
+﻿
+using Mapster;
 
 namespace VHC_Erp.Shared.SharedLogic;
 
