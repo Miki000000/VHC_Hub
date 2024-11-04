@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VHC_Erp.api.Domain.Entities;
 using VHC_Erp.api.Domain.Entities.UserEntities;
 using VHC_Erp.api.Infrastructure.EntitiesConfiguration;
+using VHC_Erp.api.Infrastructure.EntitiesConfiguration.UserConfigurations;
 
 namespace VHC_Erp.api.Infrastructure;
 
