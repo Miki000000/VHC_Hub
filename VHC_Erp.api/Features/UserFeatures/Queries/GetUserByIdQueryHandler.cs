@@ -10,14 +10,15 @@ namespace VHC_Erp.api.Features.UserFeatures.Queries;
 
 public interface IGetUserByIdQueryHandler
 {
-    Task<Option<GetUserByIdResponse>> GetUserByIdAsync(string id);
+    Task<Maybe<GetUserByIdResponse>> GetUserByIdAsync(string id);
 }
 public class GetUserByIdQueryHandler(UserManager<UserIdentity> userManager) : IGetUserByIdQueryHandler
 {
-    public async Task<Option<GetUserByIdResponse>> GetUserByIdAsync(string id)
+    public async Task<Maybe<GetUserByIdResponse>> GetUserByIdAsync(string id)
     {
-        var user = await userManager.Users.FirstOrDefaultAsync(u => u.Id == id);
-        if (user is null) return user!.None<GetUserByIdResponse>("User not found. Try again.", 404);
-        return user.Some<GetUserByIdResponse>();
+        return (await userManager.Users.FirstOrDefaultAsync(u => u.Id == id))
+            .ToMaybe()
+            .Then(u => u.Adapt<GetUserByIdResponse>().ToMaybe(), 
+                "Not possible converting the type to return", 400);
     }
 }

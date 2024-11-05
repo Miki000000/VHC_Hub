@@ -11,13 +11,13 @@
 
 @code
 {
-    UserDataGrid? _userDataGrid;
+    UserDataGrid _userDataGrid;
     async void CreateUser()
     {
         var options = new DialogOptions { FullWidth = true, CloseOnEscapeKey = true};
         var dialog = DialogService.Show<RegisterUserDialog>("Register User Async",
             options);
-
         await dialog.Result;
+        await _userDataGrid.RefreshData();
     }
 }

@@ -6,7 +6,7 @@ public class Maybe<T>
     public bool Exists { get; private set; }
     public List<string>? Error { get; private set; }
     public int HttpCode { get; private set; }
-
+    
     private Maybe(T value, bool exists, string? error, int httpCode)
     {
         Value = value;
